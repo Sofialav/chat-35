@@ -3,7 +3,7 @@ const Sse = require("json-sse");
 const cors = require("cors");
 
 const app = express();
-const port = 4000;
+const port = process.env.port || 4000;
 const db = {};
 db.messages = [];
 
