@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const db = require("./db");
 const stream = require("./stream");
-
+const messageRouter = require("./message/router");
+const channelRouter = require("./channel/router");
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -18,18 +19,14 @@ app.get("/stream", (req, res) => {
   };
   stream.updateInit(action);
   stream.init(req, res);
-});
 
-app.post("/message", (req, res) => {
-  const { text } = req.body;
-  db.messages.push(text);
-  res.send(text);
-
-  const action = {
-    type: "NEW_MESSAGE",
-    payload: text
+  const channelAction = {
+    type: "ALL_CHANNELS",
+    payload: db.channels
   };
-  stream.send(action);
+  stream.send(channelAction);
 });
 
+app.use(messageRouter);
+app.use(channelRouter);
 app.listen(port, () => console.log(`Listening on port ${port}`));
